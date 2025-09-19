@@ -1,0 +1,18 @@
+sequenceDiagram
+    participant App
+    participant Facade as DataRetrieverFacade
+    participant Retriever as BinanceDataRetriever
+    participant BinanceAPI
+    participant StorageFacade as DataStorageFacade
+    participant Storage
+    
+    App->>Facade: update_data(start_date, end_date)
+    Facade->>Retriever: get_history_data()
+    Retriever->>BinanceAPI: get_klines()
+    BinanceAPI-->>Retriever: kline data
+    Retriever-->>Facade: DataFrame
+    Facade->>StorageFacade: get_storage(alias)
+    StorageFacade-->>Facade: Storage instance
+    Facade->>Storage: save_data(DataFrame)
+    Storage-->>Facade: save result
+    Facade-->>App: update status

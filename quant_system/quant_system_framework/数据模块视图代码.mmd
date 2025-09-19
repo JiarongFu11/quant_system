@@ -1,0 +1,71 @@
+graph TD
+    %% 核心接口
+    A[IDataProvider] -->|接口| D
+    B[IDataStorage] -->|接口| E
+    C[IDataRetriever] -->|接口| F
+    D[IDataProvider]
+    E[IDataStorage]
+    F[IDataRetriever]
+    
+    %% 数据获取层
+    G[BinanceDataRetriever] -->|实现| F
+    H[DataRetrieverFacade] -->|使用| G
+    
+    %% 数据存储层
+    I[PostgresStorage] -->|实现| E
+    J[HDF5Storage] -->|实现| E
+    K[StorageFactory] -->|创建| I
+    K -->|创建| J
+    L[DataFacade] -->|使用| K
+    
+    %% 工具类
+    M[utils.date]
+    
+    %% 外部库
+    N[binance.client.Client]
+    O[SQLAlchemy]
+    P[h5py]
+    Q[Threading]
+    
+    %% 依赖关系
+    G -->|依赖| N
+    G -->|依赖| M
+    H -->|依赖| M
+    I -->|依赖| O
+    J -->|依赖| P
+    L -->|依赖| Q
+    
+    %% 方法调用
+    H -->|调用| G["get_history_data()"]
+    H -->|调用| L["get_storage()"]
+    L -->|调用| K["create_storage()"]
+    
+    %% 分组
+    subgraph "Core Interfaces"
+        D
+        E
+        F
+    end
+    
+    subgraph "Data Fetcher"
+        G
+        H
+    end
+    
+    subgraph "Data Storage"
+        I
+        J
+        K
+        L
+    end
+    
+    subgraph "Utilities"
+        M
+    end
+    
+    subgraph "External Libraries"
+        N
+        O
+        P
+        Q
+    end
